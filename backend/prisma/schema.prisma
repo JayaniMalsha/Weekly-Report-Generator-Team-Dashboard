@@ -1,0 +1,133 @@
+// Prisma schema for Weekly Report Generator & Team Dashboard
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  name           String
+  role           String          @default("TEAM_MEMBER") // TEAM_MEMBER, MANAGER, ADMIN
+  department     String          @default("Engineering")
+  avatar         String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  reports        Report[]
+  reviewComments ReviewComment[]
+  reportVersions ReportVersion[]
+  projects       UserProject[]
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  code        String        @unique
+  description String?
+  color       String        @default("#3b82f6") // hex color code
+  status      String        @default("Active") // Active, On Hold, Completed
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  reports     Report[]
+  members     UserProject[]
+}
+
+model UserProject {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  assignedAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model Report {
+  id                   String          @id @default(uuid())
+  userId               String
+  projectId            String
+  weekNumber           Int
+  year                 Int
+  startDate            DateTime
+  endDate              DateTime
+  dueDate              DateTime
+  status               String          @default("Draft") // Draft, Submitted, Needs Correction, Approved
+  isLate               Boolean         @default(false)
+  submittedAt          DateTime?
+  approvedAt           DateTime?
+  
+  tasksPlannedNextWeek String          @default("[]") // JSON string of strings
+  blockers             String          @default("[]") // JSON string of [{ id, text, isKey }]
+  achievements         String          @default("[]") // JSON string of [{ id, text, isKey }]
+  hoursBreakdown       String          @default("{}") // JSON string of { development, testing, meetings, documentation, devops, other }
+  notes                String?
+  links                String?
+  
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project              Project         @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  tasks                Task[]
+  reviewComments       ReviewComment[]
+  versions             ReportVersion[]
+
+  @@unique([userId, weekNumber, year])
+}
+
+model Task {
+  id                String   @id @default(uuid())
+  reportId          String
+  name              String
+  priority          String   @default("Medium") // Low, Medium, High, Urgent
+  plannedPercent    Int      @default(100) // 0-100
+  actualPercent     Int      @default(0)   // 0-100
+  status            String   @default("In Progress") // Completed, In Progress, Blocked, Delayed
+  timePlannedHours  Float    @default(0)
+  timeSpentHours    Float    @default(0)
+  outputDeliverable String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  report            Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model ReviewComment {
+  id             String          @id @default(uuid())
+  reportId       String
+  authorId       String
+  action         String          // APPROVED, REQUESTED_CHANGES
+  comment        String
+  versionNumber  Int             @default(1)
+  createdAt      DateTime        @default(now())
+
+  report         Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  author         User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reportVersions ReportVersion[]
+}
+
+model ReportVersion {
+  id               String         @id @default(uuid())
+  reportId         String
+  versionNumber    Int
+  submittedAt      DateTime       @default(now())
+  submittedById    String
+  snapshot         String         // Complete JSON snapshot of report content, tasks, hours, blockers, achievements
+  reviewCommentId  String?
+  statusAtSnapshot String         @default("Submitted")
+  createdAt        DateTime       @default(now())
+
+  report           Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  submittedBy      User           @relation(fields: [submittedById], references: [id], onDelete: Cascade)
+  reviewComment    ReviewComment? @relation(fields: [reviewCommentId], references: [id], onDelete: SetNull)
+}

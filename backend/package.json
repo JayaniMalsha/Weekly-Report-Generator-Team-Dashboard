@@ -1,0 +1,33 @@
+{
+  "name": "weekly-report-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Weekly Report Generator & Team Dashboard",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node ./node_modules/nodemon/bin/nodemon.js src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "node ./node_modules/prisma/build/index.js generate",
+    "prisma:push": "node ./node_modules/prisma/build/index.js db push",
+    "seed": "node src/seed/seed.js",
+    "test": "node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.19.1",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 30000
+  }
+}

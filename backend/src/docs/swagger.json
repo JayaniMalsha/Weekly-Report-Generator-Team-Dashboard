@@ -1,0 +1,251 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Weekly Report Generator & Team Dashboard API",
+    "version": "1.0.0",
+    "description": "Production REST API for multi-user weekly reporting, manager review workflows, version tracking, role-based access control, analytics, and AI assistant."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "type": "string", "enum": ["TEAM_MEMBER", "MANAGER", "ADMIN"] },
+          "department": { "type": "string" }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "projectId": { "type": "string" },
+          "weekNumber": { "type": "integer" },
+          "year": { "type": "integer" },
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "Needs Correction", "Approved"] },
+          "isLate": { "type": "boolean" },
+          "tasksPlannedNextWeek": { "type": "string" },
+          "blockers": { "type": "string" },
+          "achievements": { "type": "string" },
+          "hoursBreakdown": { "type": "string" },
+          "notes": { "type": "string" },
+          "links": { "type": "string" }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "role": { "type": "string", "enum": ["TEAM_MEMBER", "MANAGER", "ADMIN"] },
+                  "department": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "400": { "description": "Validation error" },
+          "409": { "description": "Email already exists" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful with JWT token" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get authenticated user profile",
+        "responses": {
+          "200": { "description": "Current user" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/reports": {
+      "get": {
+        "summary": "List reports with pagination and filtering",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "userId", "in": "query", "schema": { "type": "string" } },
+          { "name": "projectId", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["Draft", "Submitted", "Needs Correction", "Approved"] } },
+          { "name": "weekNumber", "in": "query", "schema": { "type": "integer" } },
+          { "name": "year", "in": "query", "schema": { "type": "integer" } },
+          { "name": "isLate", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of reports" }
+        }
+      }
+    },
+    "/reports/draft": {
+      "post": {
+        "summary": "Save or update report draft",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["projectId"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "projectId": { "type": "string" },
+                  "weekNumber": { "type": "integer" },
+                  "year": { "type": "integer" },
+                  "tasks": { "type": "array", "items": { "type": "object" } },
+                  "tasksPlannedNextWeek": { "type": "array" },
+                  "blockers": { "type": "array" },
+                  "achievements": { "type": "array" },
+                  "hoursBreakdown": { "type": "object" },
+                  "notes": { "type": "string" },
+                  "links": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Draft saved" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/reports/{id}/submit": {
+      "post": {
+        "summary": "Submit report for manager review",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Report submitted and version snapshot created" }
+        }
+      }
+    },
+    "/reports/{id}/review": {
+      "post": {
+        "summary": "Review report (Approve or Request Changes) [Manager/Admin Only]",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["action"],
+                "properties": {
+                  "action": { "type": "string", "enum": ["APPROVE", "REQUEST_CHANGES"] },
+                  "comment": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Review status updated" },
+          "403": { "description": "Forbidden for non-managers" }
+        }
+      }
+    },
+    "/analytics/dashboard": {
+      "get": {
+        "summary": "Get manager dashboard metrics and member status tracking including Not Yet Started",
+        "responses": {
+          "200": { "description": "Summary metrics and member statuses" }
+        }
+      }
+    },
+    "/analytics/insights": {
+      "get": {
+        "summary": "Get visual charts data and activity feed",
+        "responses": {
+          "200": { "description": "Chart data sets and activity logs" }
+        }
+      }
+    },
+    "/ai/chat": {
+      "post": {
+        "summary": "Ask the AI assistant natural language questions about team activity and blockers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "AI answer with grounded context" }
+        }
+      }
+    }
+  }
+}
