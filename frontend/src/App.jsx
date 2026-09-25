@@ -50,7 +50,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
           {children}
         </main>
       </div>
-      <AIAssistantWidget />
+      {(user?.role === 'MANAGER' || user?.role === 'ADMIN') && <AIAssistantWidget />}
     </div>
   );
 };
@@ -193,11 +193,11 @@ function App() {
             }
           />
 
-          {/* AI Intelligence Page */}
+          {/* AI Intelligence Page - Manager & Admin only */}
           <Route
             path="/assistant"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}>
                 <AIAssistantPage />
               </ProtectedRoute>
             }

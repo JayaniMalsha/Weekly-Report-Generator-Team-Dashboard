@@ -8,8 +8,8 @@ router.use(authMiddleware);
 
 router.get('/', projectController.getProjects);
 router.get('/:id', projectController.getProjectById);
-router.post('/', requireRole(['MANAGER', 'ADMIN']), projectController.createProject);
-router.put('/:id', requireRole(['MANAGER', 'ADMIN']), projectController.updateProject);
-router.delete('/:id', requireRole(['MANAGER', 'ADMIN']), projectController.deleteProject);
+router.post('/', requireRole(['TEAM_MEMBER', 'MANAGER', 'ADMIN']), projectController.createProject);
+router.put('/:id', requireRole(['TEAM_MEMBER', 'MANAGER', 'ADMIN']), projectController.updateProject);
+router.delete('/:id', requireRole(['TEAM_MEMBER', 'MANAGER', 'ADMIN']), projectController.deleteProject);
 
 module.exports = router;

@@ -94,4 +94,22 @@ describe('Role-Based Access Control (RBAC) Tests', () => {
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body.data)).toBe(true);
   });
+
+  test('8. Team member CANNOT access AI Assistant (403 Forbidden)', async () => {
+    const res = await request(app)
+      .post('/api/ai/chat')
+      .set('Authorization', `Bearer ${alexToken}`)
+      .send({ query: 'What are the blockers?' });
+    expect(res.statusCode).toBe(403);
+    expect(res.body.success).toBe(false);
+  });
+
+  test('9. Manager CAN access AI Assistant chat (200 OK)', async () => {
+    const res = await request(app)
+      .post('/api/ai/chat')
+      .set('Authorization', `Bearer ${managerToken}`)
+      .send({ query: 'Show me blockers for Client A' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.success).toBe(true);
+  });
 });

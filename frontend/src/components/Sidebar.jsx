@@ -91,18 +91,20 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* AI Assistant Section */}
-        <div>
-          <div className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-            Intelligence
+        {/* AI Assistant Section (Manager & Admin only) */}
+        {isManager && (
+          <div>
+            <div className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Intelligence
+            </div>
+            <nav className="space-y-1">
+              <NavLink to="/assistant" className={linkClass}>
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                AI Team Assistant
+              </NavLink>
+            </nav>
           </div>
-          <nav className="space-y-1">
-            <NavLink to="/assistant" className={linkClass}>
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              AI Team Assistant
-            </NavLink>
-          </nav>
-        </div>
+        )}
       </div>
 
       {/* Role info footer card */}

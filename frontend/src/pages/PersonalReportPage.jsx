@@ -95,8 +95,8 @@ const PersonalReportPage = () => {
           const repRes = await reportApi.getReportById(targetId);
           loadReportIntoState(repRes.data.data);
         } else {
-          // Check if user has an existing report for this week
-          const myReportsRes = await reportApi.getReports({ weekNumber: 36, year: 2026 });
+          // Check if user already has an existing report
+          const myReportsRes = await reportApi.getReports({ limit: 1 });
           if (myReportsRes.data.data.length > 0) {
             loadReportIntoState(myReportsRes.data.data[0]);
           }
@@ -269,6 +269,9 @@ const PersonalReportPage = () => {
       setCurrentStatus(res.data.data.status);
       setMessage('Draft saved successfully.');
     } catch (err) {
+      if (err.response?.status === 409 && err.response?.data?.data) {
+        loadReportIntoState(err.response.data.data);
+      }
       setError(err.response?.data?.message || 'Failed to save draft.');
     } finally {
       setSaving(false);
@@ -306,6 +309,9 @@ const PersonalReportPage = () => {
       setIsLate(subRes.data.data.isLate);
       setMessage('Report submitted successfully! Manager has been notified for review.');
     } catch (err) {
+      if (err.response?.status === 409 && err.response?.data?.data) {
+        loadReportIntoState(err.response.data.data);
+      }
       setError(err.response?.data?.message || 'Failed to submit report.');
     } finally {
       setSubmitting(false);

@@ -62,6 +62,22 @@ const register = async (req, res, next) => {
       }
     });
 
+    if (assignedRole === 'TEAM_MEMBER') {
+      const activeProjects = await prisma.project.findMany({
+        where: { status: 'Active' },
+        select: { id: true }
+      });
+      if (activeProjects.length > 0) {
+        await prisma.userProject.createMany({
+          data: activeProjects.map((p) => ({
+            userId: user.id,
+            projectId: p.id
+          })),
+          skipDuplicates: true
+        });
+      }
+    }
+
     const token = generateToken(user.id);
 
     return res.status(201).json({

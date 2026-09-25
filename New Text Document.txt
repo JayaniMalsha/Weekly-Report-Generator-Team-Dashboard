@@ -1,0 +1,48 @@
+first time - 
+Run the backend
+cd backend
+npm install
+npm run prisma:generate
+# Ensure PostgreSQL is running with DATABASE_URL in .env
+npm run prisma:push
+npm run seed
+npm start
+
+Server running on http://localhost:5000
+http://localhost:5000/api/docs
+
+Run the frontend
+cd frontend
+npm install
+npm run dev
+
+http://localhost:5173
+
+second time -
+Terminal 1 — Backend
+
+cd backend
+npm start
+
+Terminal 2 — Frontend
+
+cd frontend
+npm run dev
+
+| Role        | Email                 | Password       |
+| ----------- | --------------------- | -------------- |
+| Admin       | `admin@example.com`   | `Password123!` |
+| Manager     | `manager@example.com` | `Password123!` |
+| Team Member | `alex@example.com`    | `Password123!` |
+| Team Member | `marcus@example.com`  | `Password123!` |
+
+
+
+before code add team members can new reports add. but i add new members not consider code after register, they can add new reports, they can add only first report only edit and submit. 
+Secure authentication/session works.
+nav bar Switch Role drop down remove. 
+
+Manager/Admin can use → ✅ Allowed 
+Team Member  cant use→ ❌ 403 Forbidden. therefore can remove chatbot team member pages add only manager and admin pages. 
+
+PostgreSQL add database remove sql lite

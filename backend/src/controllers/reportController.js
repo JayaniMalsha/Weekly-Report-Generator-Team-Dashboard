@@ -91,6 +91,20 @@ const saveReportDraft = async (req, res, next) => {
         });
       });
     } else {
+      // Team members can add only their first report, and thereafter only edit and submit it
+      if (req.user.role === 'TEAM_MEMBER') {
+        const existingMemberReport = await prisma.report.findFirst({
+          where: { userId: req.user.id }
+        });
+        if (existingMemberReport) {
+          return res.status(409).json({
+            success: false,
+            message: 'You already have a weekly report. Team members can only edit and submit their existing report.',
+            data: existingMemberReport
+          });
+        }
+      }
+
       // Check if report already exists for this week
       const existing = await prisma.report.findUnique({
         where: {

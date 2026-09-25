@@ -38,9 +38,10 @@ A production-grade, full-stack multi-user web application that allows individual
   - Workload and task distribution by project.
   - Team-wide hours spent by activity type.
   - Live activity feed of recent submissions and review decisions.
-- **AI Team Intelligence Assistant (Bonus)**:
-  - In-app floating chat widget + dedicated intelligence workspace.
-  - Grounded RAG over actual team report records in SQLite/PostgreSQL.
+- **AI Team Intelligence Assistant (Bonus - Manager & Admin Only)**:
+  - Role-protected: Manager and Admin only (Team Members receive `403 Forbidden`).
+  - In-app floating chat widget + dedicated intelligence workspace for Managers/Admins.
+  - Grounded RAG over actual team report records in PostgreSQL.
   - Answers natural language questions about team tasks, blockers, and generates one-click executive summaries.
 - **OpenAPI / Swagger Interactive Documentation**:
   - Live at `http://localhost:5000/api/docs`.
@@ -53,8 +54,8 @@ A production-grade, full-stack multi-user web application that allows individual
 |---|---|
 | **Frontend** | React 18, Vite, Tailwind CSS, Recharts, Lucide React, React Router v6, Axios |
 | **Backend** | Node.js, Express, Prisma ORM, JSON Web Tokens (JWT), BcryptJS |
-| **Database** | SQLite (Default frictionless local evaluation) / PostgreSQL (Production ready) |
-| **Testing** | Jest, Supertest (13 automated tests covering RBAC & Review Workflow) |
+| **Database** | PostgreSQL (Relational database with schema enforcement) |
+| **Testing** | Jest, Supertest (covering RBAC & Review Workflow) |
 | **API Docs** | OpenAPI 3.0 & Swagger UI |
 
 ---
@@ -64,6 +65,7 @@ A production-grade, full-stack multi-user web application that allows individual
 ### Prerequisites
 - Node.js (v18+ or v20+)
 - npm (v9+)
+- PostgreSQL database instance
 
 ---
 
@@ -77,11 +79,15 @@ A production-grade, full-stack multi-user web application that allows individual
    ```bash
    npm install
    ```
-3. Sync database schema (Prisma automatically initializes the local SQLite database `dev.db` with foreign keys and relations):
+3. Configure `backend/.env` with your PostgreSQL connection string:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/weekly_report_db?schema=public"
+   ```
+4. Sync database schema (Prisma automatically synchronizes models, indexes, and relations with PostgreSQL):
    ```bash
    npm run prisma:push
    ```
-4. Seed the database with multi-user, multi-week demo data (Weeks 34, 35, 36 in different statuses):
+5. Seed the database with multi-user, multi-week demo data (Weeks 34, 35, 36 in different statuses):
    ```bash
    npm run seed
    ```

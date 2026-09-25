@@ -160,11 +160,29 @@ const TeamDashboardPage = () => {
           </div>
         </div>
 
-        {(projectId || statusFilter) && (
+        {/* Member Filter */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-bold text-slate-700">Member:</span>
+          <select
+            value={memberFilter}
+            onChange={(e) => setMemberFilter(e.target.value)}
+            className="text-xs border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white focus:ring-2 focus:ring-indigo-500"
+        >
+        <option value="">All Members</option>
+           {membersList.map((member) => (
+        <option key={member.userId} value={member.userId}>
+           {member.userName}
+        </option>
+         ))}
+       </select>
+       </div>
+
+        {(projectId || statusFilter || memberFilter) && (
           <button
             onClick={() => {
               setProjectId('');
               setStatusFilter('');
+              setMemberFilter('');
             }}
             className="text-xs text-indigo-600 hover:underline font-medium"
           >
