@@ -255,7 +255,4 @@ TeamSync Pro uses **PostgreSQL** as its relational database, with **Prisma ORM**
 
 * **Frontend Code**: `frontend/`
 * **Backend Code**: `backend/`
-* **Entity Relationship Diagram**: `docs/ER_DIAGRAM.svg` & `docs/ER_DIAGRAM.md`
-* **Google Slides Presentation Guide**: `docs/PRESENTATION.md`
-* **Video Walkthrough Script**: `docs/DEMO_SCRIPT.md`
 * **Automated Tests**: `backend/tests/`
