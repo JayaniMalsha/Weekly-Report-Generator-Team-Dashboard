@@ -153,14 +153,11 @@ Tests:       13 passed, 13 total
 
 You can use the **One-Click Instant Evaluation Logins** available directly on the login page (`http://localhost:5173/login`).
 
-| Role            | Name           | Pre-Seeded Context                                                  |
-| --------------- | -------------- | ------------------------------------------------------------------- |
-| **ADMIN**       | Victoria Vance | Executive leadership, User Management & Role Assignment             |
-| **MANAGER**     | David Miller   | Reviews all reports, approves/requests changes, dashboard analytics |
-| **TEAM MEMBER** | Alex Rivera    | Frontend Developer; reports in Approved & Submitted status          |
-| **TEAM MEMBER** | Sarah Chen     | Cloud/AI Developer; reports in Approved & Draft status              |
-| **TEAM MEMBER** | Marcus Johnson | QA Engineer; report currently in **Needs Correction** status        |
-| **TEAM MEMBER** | Elena Rostova  | Designer; **Not Yet Started** report for the active week            |
+| Role            | Pre-Seeded Context                                                                     |
+| --------------- | -------------------------------------------------------------------------------------- |
+| **ADMIN**       | Executive leadership, User Management & Role Assignment                                |
+| **MANAGER**     | Reviews team reports, approves/requests changes, dashboard analytics                   |
+| **TEAM MEMBER** | Creates, edits, submits, and resubmits weekly reports according to the review workflow |
 
 ---
 
