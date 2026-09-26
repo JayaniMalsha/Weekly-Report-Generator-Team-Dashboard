@@ -228,7 +228,7 @@ TeamSync Pro uses **PostgreSQL** as its relational database, with **Prisma ORM**
 2. Configure `DATABASE_URL` in `backend/.env`:
 
    ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/weekly_reports?schema=public"
+   DATABASE_URL="your database url add"
    ```
 
 3. Generate the Prisma client:
